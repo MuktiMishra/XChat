@@ -25,4 +25,4 @@ const start = async () => {
     })
 }
 
-start().catch((error: any) => console.log("error while starting: ", error)); 
+start().catch((error) => console.log("error while starting: ", error)); 

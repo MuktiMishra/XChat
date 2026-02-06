@@ -1,8 +1,7 @@
-import {Server} from "socket.io"; 
 
-let io: Server | null; 
+let io;  
 
-export const setIO = (serverIO: Server) => {
+export const setIO = (serverIO) => {
     io = serverIO; 
 };
 
