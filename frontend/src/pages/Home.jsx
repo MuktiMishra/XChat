@@ -1,12 +1,15 @@
 import React from "react"; 
 import Navbar from "../components/Navbar.jsx";
 import {IoIosCheckmarkCircle} from "react-icons/io";
+import Features from "../components/Features.jsx";
+import CTA from "../components/CTA.jsx"; 
 
 const Home = () => {
     return (
-        <div className="w-full mx-auto h-screen bg-[#0A0F14]">
+        <div className="w-full h-screen bg-[#0A0F14]">
             <Navbar />
-          <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col bg-[#0A0F14]">
+          <div className="flex flex-col w-full h-64 space-y-36 max-w-7xl mx-auto">
             <div className="flex text-white justify-between items-center h-52">
                <div className="w-1/2 pl-5 pt-40 flex flex-col gap-2">
                     <p className="text-5xl font-bold tracking-tight ">Chat Freely .</p>
@@ -23,6 +26,9 @@ const Home = () => {
                </div>
             </div>
            </div>
+            <Features />
+            <CTA />
+        </div>
         </div>
     )
 }
