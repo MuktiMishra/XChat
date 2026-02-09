@@ -1,5 +1,7 @@
 import {Redis} from "ioredis"; 
+import dotenv from "dotenv"; 
 
-const redisClient = new Redis(process.env.REDIS_URL);
+dotenv.config();
 
-export default redisClient; 
+export const redisClient = new Redis(process.env.REDIS_URL);
+
