@@ -20,7 +20,7 @@ const Create = () => {
 
         if (response.status === 200) {
             alert("response was good"); 
-           return navigate("/home"); 
+           return navigate(`/chat/${roomName}`); 
         }
 
     }
