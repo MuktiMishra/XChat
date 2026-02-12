@@ -1,7 +1,7 @@
 import React from "react"; 
 import Navbar from "../components/Navbar.jsx";
 import {IoIosCheckmarkCircle} from "react-icons/io";
-import Features from "../components/Features.jsx";
+import Features from "../components/features.jsx";
 import CTA from "../components/CTA.jsx"; 
 
 const Home = () => {
