@@ -1,29 +1,57 @@
-import {Router} from "express"; 
-import {getIO} from "../utils/socket.js"; 
-import {redisClient} from "../utils/redis.js"
+import { Router } from "express";
+import { redisClient } from "../utils/redis.js";
 
 const roomRouter = Router();
 
-roomRouter.post('/create', async (req, res) => {
-    const { roomName, activeTime } = req.body; 
+const parseActiveTimeToSeconds = (activeTime) => {
+  const minutes = Number(String(activeTime).replace(/[^\d]/g, ""));
+  if (!Number.isFinite(minutes) || minutes <= 0) {
+    return null;
+  }
 
-    if (!roomName || !activeTime ) {
-        return res.status(400).json({message: "Bad Request", data: {}}); 
-    }
-    
-    await redisClient.set(roomName, JSON.stringify([])); 
-    await redisClient.expire(roomName, number(activeTime.slice(0, 3)*60)); // 30m means 30 minutes so 30 * 60 = 1800 seconds or 30 minutes
+  return minutes * 60;
+};
 
-    return res.status(200).json({message: "Successfully initialized", data: {roomName}}); 
+roomRouter.post("/create", async (req, res) => {
+  const { roomName, activeTime } = req.body;
+
+  if (!roomName || !activeTime) {
+    return res.status(400).json({ message: "Bad Request", data: {} });
+  }
+
+  const ttl = parseActiveTimeToSeconds(activeTime);
+  if (!ttl) {
+    return res.status(400).json({ message: "Invalid activeTime", data: {} });
+  }
+
+  await redisClient.set(roomName, JSON.stringify([]));
+  await redisClient.expire(roomName, ttl);
+
+  return res
+    .status(200)
+    .json({ message: "Successfully initialized", data: { roomName, ttl } });
 });
 
-roomRouter.post('/delete', async(req, res) => {
-    const {roomName} = req.body; 
-    console.log(roomName); 
+roomRouter.get("/:roomName", async (req, res) => {
+  const { roomName } = req.params;
+  const messages = await redisClient.get(roomName);
 
-    await redisClient.del(roomName); 
+  if (messages === null) {
+    return res.status(404).json({ message: "Room not found", data: {} });
+  }
 
-    return res.status(200).json({message: "successfully deleted", data: {}}); 
-}); 
+  return res.status(200).json({
+    message: "Room found",
+    data: { roomName, messages: JSON.parse(messages) },
+  });
+});
 
-export default roomRouter; 
+roomRouter.post("/delete", async (req, res) => {
+  const { roomName } = req.body;
+
+  await redisClient.del(roomName);
+
+  return res.status(200).json({ message: "successfully deleted", data: {} });
+});
+
+export default roomRouter;
